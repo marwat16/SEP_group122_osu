@@ -274,7 +274,7 @@ namespace osu.Game.Graphics.Backgrounds
                 shader.Unbind();
             }
 
-            private static readonly bool[] branchCoverage = new bool[2]; // Two branches: F1Br1C and F1Br2C
+            private static readonly bool[] branchCoverage = new bool[4]; // Four branches: F1Br1C, F1Br2C, F1Br3C and F1Br4C
 
             private static void MarkBranchCovered(int index)
             {
@@ -292,16 +292,25 @@ namespace osu.Game.Graphics.Backgrounds
                     MarkBranchCovered(0);
                     clampedTopLeft.X = Math.Clamp(topLeft.X, 0f, 1f);
                     size.X = Math.Clamp(topLeft.X + size.X, 0f, 1f) - clampedTopLeft.X;
-
+                }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(1);
                 }
 
                 if (clampAxes == Axes.Y || clampAxes == Axes.Both)
                 {
-                    MarkBranchCovered(1);
+                    MarkBranchCovered(2);
                     clampedTopLeft.Y = Math.Clamp(topLeft.Y, 0f, 1f);
                     size.Y = Math.Clamp(topLeft.Y + size.Y, 0f, 1f) - clampedTopLeft.Y;
-
                 }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(3);
+                }
+
                 PrintCoverage();
 
                 return new Quad(clampedTopLeft.X, clampedTopLeft.Y, size.X, size.Y);
@@ -309,7 +318,7 @@ namespace osu.Game.Graphics.Backgrounds
 
             private static void PrintCoverage()
             {
-                string[] branches = { "F1Br1C", "F1Br2C" };
+                string[] branches = { "F1Br1C", "F1Br2C", "F1Br3C", "F1Br4C" };
 
                 for (int i = 0; i < branchCoverage.Length; i++)
                 {

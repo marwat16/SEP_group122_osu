@@ -16,76 +16,45 @@ namespace osu.Game.Tests.Visual.Background
     public partial class TestSceneGetClampedQuad : OsuTestScene
     {
         [Test]
-        public void Test_getClampedQuad_ClampAxesX()
+        public void TestGetClampedQuad_AxesNone()
         {
-            // Arrange
-            Axes clampAxes = Axes.X;
-            Vector2 topLeft = new Vector2(-0.5f, 0.2f);
-            Vector2 size = new Vector2(1.5f, 0.5f);
-
-
-            // Act
-            Quad result = TrianglesV2.TrianglesDrawNode.getClampedQuad(clampAxes, topLeft, size);
-
-            // Assert
-            Assert.AreEqual(0f, result.TopLeft.X, 0.001);
-            Assert.AreEqual(1f, result.Size.X, 0.001);
-            Assert.AreEqual(topLeft.Y, result.TopLeft.Y, 0.001);
-            Assert.AreEqual(size.Y, result.Size.Y, 0.001);
+            var topLeft = new Vector2(-0.5f, -0.5f);
+            var size = new Vector2(2f, 2f);
+            var result = TrianglesV2.TrianglesDrawNode.getClampedQuad(Axes.None, topLeft, size);
+            Assert.AreEqual(new Quad(topLeft.X, topLeft.Y, size.X, size.Y), result);
         }
 
         [Test]
-        public void Test_getClampedQuad_ClampAxesY()
+        public void TestGetClampedQuad_AxesX()
         {
-            // Arrange
-            Axes clampAxes = Axes.Y;
-            Vector2 topLeft = new Vector2(0.3f, -0.8f);
-            Vector2 size = new Vector2(0.7f, 2.0f);
-
-            // Act
-            Quad result = TrianglesV2.TrianglesDrawNode.getClampedQuad(clampAxes, topLeft, size);
-
-            // Assert
-            Assert.AreEqual(topLeft.X, result.TopLeft.X, 0.001);
-            Assert.AreEqual(0f, result.TopLeft.Y, 0.001);
-            Assert.AreEqual(size.X, result.Size.X, 0.001);
-            Assert.AreEqual(1f, result.Size.Y, 0.001);
+            var topLeft = new Vector2(-0.5f, 0.5f);
+            var size = new Vector2(2f, 0.5f);
+            var result = TrianglesV2.TrianglesDrawNode.getClampedQuad(Axes.X, topLeft, size);
+            var expectedTopLeft = new Vector2(0f, 0.5f);
+            var expectedSize = new Vector2(1f, 0.5f);
+            Assert.AreEqual(new Quad(expectedTopLeft.X, expectedTopLeft.Y, expectedSize.X, expectedSize.Y), result);
         }
 
         [Test]
-        public void Test_getClampedQuad_ClampAxesBoth()
+        public void TestGetClampedQuad_AxesY()
         {
-            // Arrange
-            Axes clampAxes = Axes.Both;
-            Vector2 topLeft = new Vector2(-0.5f, -0.8f);
-            Vector2 size = new Vector2(1.5f, 2.0f);
-
-            // Act
-            Quad result = TrianglesV2.TrianglesDrawNode.getClampedQuad(clampAxes, topLeft, size);
-
-            // Assert
-            Assert.AreEqual(0f, result.TopLeft.X, 0.001);
-            Assert.AreEqual(0f, result.TopLeft.Y, 0.001);
-            Assert.AreEqual(1f, result.Size.X, 0.001);
-            Assert.AreEqual(1f, result.Size.Y, 0.001);
+            var topLeft = new Vector2(0.5f, -0.5f);
+            var size = new Vector2(0.5f, 2f);
+            var result = TrianglesV2.TrianglesDrawNode.getClampedQuad(Axes.Y, topLeft, size);
+            var expectedTopLeft = new Vector2(0.5f, 0f);
+            var expectedSize = new Vector2(0.5f, 1f);
+            Assert.AreEqual(new Quad(expectedTopLeft.X, expectedTopLeft.Y, expectedSize.X, expectedSize.Y), result);
         }
 
         [Test]
-        public void Test_getClampedQuad_ClampAxesNone()
+        public void TestGetClampedQuad_AxesBoth()
         {
-            // Arrange
-            Axes clampAxes = Axes.None;
-            Vector2 topLeft = new Vector2(0.3f, 0.2f);
-            Vector2 size = new Vector2(0.4f, 0.3f);
-
-            // Act
-            Quad result = TrianglesV2.TrianglesDrawNode.getClampedQuad(clampAxes, topLeft, size);
-
-            // Assert
-            Assert.AreEqual(topLeft.X, result.TopLeft.X, 0.001);
-            Assert.AreEqual(topLeft.Y, result.TopLeft.Y, 0.001);
-            Assert.AreEqual(size.X, result.Size.X, 0.001);
-            Assert.AreEqual(size.Y, result.Size.Y, 0.001);
+            var topLeft = new Vector2(-0.5f, -0.5f);
+            var size = new Vector2(2f, 2f);
+            var result = TrianglesV2.TrianglesDrawNode.getClampedQuad(Axes.Both, topLeft, size);
+            var expectedTopLeft = new Vector2(0f, 0f);
+            var expectedSize = new Vector2(1f, 1f);
+            Assert.AreEqual(new Quad(expectedTopLeft.X, expectedTopLeft.Y, expectedSize.X, expectedSize.Y), result);
         }
     }
 

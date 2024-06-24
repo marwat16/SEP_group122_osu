@@ -109,7 +109,7 @@ namespace osu.Game.Rulesets.Mania.MathUtils
                 downHeap(keys, 1, i - 1, lo, comparer);
             }
         }
-        private static readonly bool[] branchCoverage = new bool[2]; // Two branches: F2Br1C and F2Br2C
+        private static readonly bool[] branchCoverage = new bool[4]; // Four branches: F2Br1C, F2Br2C, F2Br3C and F2Br4C
 
         private static void MarkBranchCovered(int index)
         {
@@ -120,7 +120,6 @@ namespace osu.Game.Rulesets.Mania.MathUtils
         }
         public static void downHeap(T[] keys, int i, int n, int lo, IComparer<T> comparer)
         {
-
             T d = keys[lo + i - 1];
 
             while (i <= n / 2)
@@ -132,23 +131,34 @@ namespace osu.Game.Rulesets.Mania.MathUtils
                     MarkBranchCovered(0);
                     child++;
                 }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(1);
+                }
 
                 if (!(comparer.Compare(d, keys[lo + child - 1]) < 0))
                 {
-                    MarkBranchCovered(1);
+                    MarkBranchCovered(2);
                     break;
+                }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(3);
                 }
 
                 keys[lo + i - 1] = keys[lo + child - 1];
                 i = child;
             }
+
             PrintCoverage();
             keys[lo + i - 1] = d;
         }
 
         private static void PrintCoverage()
         {
-            string[] branches = {"F2Br1C", "F2Br2C" };
+            string[] branches = { "F2Br1C", "F2Br2C", "F2Br3C", "F2Br4C" };
 
             for (int i = 0; i < branchCoverage.Length; i++)
             {

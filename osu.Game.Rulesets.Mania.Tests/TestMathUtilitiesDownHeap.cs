@@ -11,43 +11,52 @@ namespace osu.Game.Rulesets.Mania.Tests
     public class TestMathUtilitiesDownHeap
     {
         [Test]
-        public void TestDownHeap_Heapify()
+        public void DownHeap_BasicExecution()
         {
-            // Arrange
-            int[] array = { 5, 3, 8, 4, 2, 7 };
-            IComparer<int> comparer = Comparer<int>.Default;
-
-            // Act
-            LegacySortHelper<int>.downHeap(array, 1, array.Length, 0, comparer);
-
-            // Assert
-            // Validate the array after heapifying
-            Assert.AreEqual(8, array[0]); // Root should be the largest element
-            Assert.AreEqual(3, array[1]); // Left child of the root
-            Assert.AreEqual(7, array[2]); // Right child of the root
-            Assert.AreEqual(4, array[3]); // Left child of the second level
-            Assert.AreEqual(2, array[4]); // Right child of the second level
-            Assert.AreEqual(5, array[5]);
+            var keys = new int[] { 3, 1, 2 };
+            LegacySortHelper<int>.downHeap(keys, 1, 3, 0, Comparer<int>.Default);
+            Assert.AreEqual(new int[] { 3, 1, 2 }, keys);
         }
 
         [Test]
-        public void TestDownHeap_NoHeapify()
+        public void DownHeap_FirstChildComparisonTrue()
         {
-            // Arrange
-            int[] array = { 8, 7, 6, 5, 4, 3 };
-            IComparer<int> comparer = Comparer<int>.Default;
+            var keys = new int[] { 3, 1, 4, 2 };
+            LegacySortHelper<int>.downHeap(keys, 1, 4, 0, Comparer<int>.Default);
+            Assert.AreEqual(new int[] { 4, 1, 3, 2 }, keys);
+        }
 
-            // Act
-            LegacySortHelper<int>.downHeap(array, 1, array.Length, 0, comparer);
+        [Test]
+        public void DownHeap_FirstChildComparisonFalse()
+        {
+            var keys = new int[] { 4, 3, 1, 2 };
+            LegacySortHelper<int>.downHeap(keys, 1, 4, 0, Comparer<int>.Default);
+            Assert.AreEqual(new int[] { 4, 3, 1, 2 }, keys);
+        }
 
-            // Assert
-            // Ensure no changes occurred as the array was already a valid heap
-            Assert.AreEqual(8, array[0]);
-            Assert.AreEqual(7, array[1]);
-            Assert.AreEqual(6, array[2]);
-            Assert.AreEqual(5, array[3]);
-            Assert.AreEqual(4, array[4]);
-            Assert.AreEqual(3, array[5]);
+        [Test]
+        public void DownHeap_NoChildComparison()
+        {
+            var keys = new int[] { 4, 3, 2, 1 };
+            LegacySortHelper<int>.downHeap(keys, 2, 4, 0, Comparer<int>.Default);
+            Assert.AreEqual(new int[] { 4, 3, 2, 1 }, keys);
+        }
+
+        [Test]
+        public void DownHeap_BreakCondition()
+        {
+            var keys = new int[] { 2, 3, 1 };
+            LegacySortHelper<int>.downHeap(keys, 1, 3, 0, Comparer<int>.Default);
+            Assert.AreEqual(new int[] { 3, 2, 1 }, keys);
+        }
+
+
+        [Test]
+        public void DownHeap_NoBreakCondition()
+        {
+            var keys = new int[] { 3, 1, 2 };
+            LegacySortHelper<int>.downHeap(keys, 1, 3, 0, Comparer<int>.Default);
+            Assert.AreEqual(new int[] { 3, 1, 2 }, keys);
         }
     }
 }
