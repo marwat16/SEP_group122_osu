@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Versioning;
 using osu.Desktop.LegacyIpc;
@@ -12,6 +13,7 @@ using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Game;
 using osu.Game.Graphics.Backgrounds;
+using osu.Game.Rulesets.Mania.MathUtils;
 using osu.Game.IPC;
 using osu.Game.Replays.Legacy;
 using osu.Game.Rulesets.Catch.Replays;
@@ -56,6 +58,7 @@ namespace osu.Desktop
                 // See https://www.mongodb.com/docs/realm/sdk/dotnet/compatibility/
                 if (windowsVersion.Major < 6 || (windowsVersion.Major == 6 && windowsVersion.Minor <= 2))
                 {
+
                     unsafe
                     {
                         // If users running in compatibility mode becomes more of a common thing, we may want to provide better guidance or even consider
@@ -71,14 +74,22 @@ namespace osu.Desktop
                     }
                 }
 
+                //print statements for downHeap() method - Function 2 Cosmina
+                int[] keys = { 3, 1, 2, 7, 8, 4 }; // Example array
+                LegacySortHelper<int>.downHeap(keys, 1, keys.Length, 0, Comparer<int>.Default); // Call downHeap directly
+
                 setupSquirrel();
             }
+
+
 
             // NVIDIA profiles are based on the executable name of a process.
             // Lazer and stable share the same executable name.
             // Stable sets this setting to "Off", which may not be what we want, so let's force it back to the default "Auto" on startup.
             if (OperatingSystem.IsWindows())
+            {
                 NVAPI.ThreadedOptimisations = NvThreadControlSetting.OGL_THREAD_CONTROL_DEFAULT;
+            }
 
             // Back up the cwd before DesktopGameHost changes it
             string cwd = Environment.CurrentDirectory;
@@ -101,10 +112,14 @@ namespace osu.Desktop
 
                     case "--debug-client-id":
                         if (!DebugUtils.IsDebugBuild)
+                        {
                             throw new InvalidOperationException("Cannot use this argument in a non-debug build.");
+                        }
 
                         if (!int.TryParse(val, out int clientID))
+                        {
                             throw new ArgumentException("Provided client ID must be an integer.");
+                        }
 
                         gameName = $"{base_game_name}-{clientID}";
                         break;
@@ -121,8 +136,11 @@ namespace osu.Desktop
             {
                 if (!host.IsPrimaryInstance)
                 {
+
                     if (trySendIPCMessage(host, cwd, args))
+                    {
                         return;
+                    }
 
                     // we want to allow multiple instances to be started when in debug.
                     if (!DebugUtils.IsDebugBuild)
@@ -139,6 +157,7 @@ namespace osu.Desktop
                         Logger.Log("Starting legacy IPC provider...");
                         legacyIpc = new LegacyTcpIpcProvider();
                         legacyIpc.Bind();
+
                     }
                     catch (Exception ex)
                     {
@@ -147,22 +166,31 @@ namespace osu.Desktop
                 }
 
                 if (tournamentClient)
+                {
                     host.Run(new TournamentGame());
+                }
                 else
+                {
                     host.Run(new OsuGameDesktop(args));
+                }
             }
 
             //for the print statements - Function 1, Daphne
             Background background1 = new Background("texture1");
             Background background2 = new Background("texture1");
-
             background1.Equals(background2);
 
             //for the print statements - Function 2, Daphne
             var legacyFrame = new LegacyReplayFrame(0, new Vector2(10, 0).X, null, ReplayButtonState.Left1);
             var catchFrame = new CatchReplayFrame();
             catchFrame.FromLegacy(legacyFrame, null, null);
+
+            //for the print statements - Function 2, Cosmina
+            int[] array = { 5, 3, 8, 4, 2, 7 };
+            IComparer<int> comparer = Comparer<int>.Default;
+            LegacySortHelper<int>.downHeap(array, 1, array.Length, 0, comparer);
         }
+
 
         private static bool trySendIPCMessage(IIpcHost host, string cwd, string[] args)
         {
@@ -220,4 +248,6 @@ namespace osu.Desktop
             });
         }
     }
+
+
 }
