@@ -135,6 +135,7 @@ namespace osu.Desktop
                         Logger.Log("Starting legacy IPC provider...");
                         legacyIpc = new LegacyTcpIpcProvider();
                         legacyIpc.Bind();
+
                     }
                     catch (Exception ex)
                     {
@@ -147,7 +148,9 @@ namespace osu.Desktop
                 else
                     host.Run(new OsuGameDesktop(args));
             }
+
         }
+
 
         private static bool trySendIPCMessage(IIpcHost host, string cwd, string[] args)
         {
@@ -205,4 +208,6 @@ namespace osu.Desktop
             });
         }
     }
+
+
 }
