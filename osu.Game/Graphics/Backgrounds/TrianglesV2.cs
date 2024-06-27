@@ -181,7 +181,7 @@ namespace osu.Game.Graphics.Backgrounds
 
         protected override DrawNode CreateDrawNode() => new TrianglesDrawNode(this);
 
-        private class TrianglesDrawNode : DrawNode
+        public class TrianglesDrawNode : DrawNode
         {
             protected new TrianglesV2 Source => (TrianglesV2)base.Source;
 
@@ -230,6 +230,7 @@ namespace osu.Game.Graphics.Backgrounds
 
             protected override void Draw(IRenderer renderer)
             {
+                Console.WriteLine("LOL");
                 base.Draw(renderer);
 
                 if (Source.AimCount == 0 || thickness == 0)
@@ -273,25 +274,57 @@ namespace osu.Game.Graphics.Backgrounds
                 shader.Unbind();
             }
 
-            private static Quad getClampedQuad(Axes clampAxes, Vector2 topLeft, Vector2 size)
+            private static readonly bool[] branchCoverage = new bool[4]; // Four branches: F1Br1C, F1Br2C, F1Br3C and F1Br4C
+
+            private static void MarkBranchCovered(int index)
+            {
+                if (index >= 0 && index < branchCoverage.Length)
+                {
+                    branchCoverage[index] = true;
+                }
+            }
+            public static Quad getClampedQuad(Axes clampAxes, Vector2 topLeft, Vector2 size)
             {
                 Vector2 clampedTopLeft = topLeft;
 
                 if (clampAxes == Axes.X || clampAxes == Axes.Both)
                 {
+                    MarkBranchCovered(0);
                     clampedTopLeft.X = Math.Clamp(topLeft.X, 0f, 1f);
                     size.X = Math.Clamp(topLeft.X + size.X, 0f, 1f) - clampedTopLeft.X;
+                }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(1);
                 }
 
                 if (clampAxes == Axes.Y || clampAxes == Axes.Both)
                 {
+                    MarkBranchCovered(2);
                     clampedTopLeft.Y = Math.Clamp(topLeft.Y, 0f, 1f);
                     size.Y = Math.Clamp(topLeft.Y + size.Y, 0f, 1f) - clampedTopLeft.Y;
                 }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(3);
+                }
+
+                PrintCoverage();
 
                 return new Quad(clampedTopLeft.X, clampedTopLeft.Y, size.X, size.Y);
             }
 
+            private static void PrintCoverage()
+            {
+                string[] branches = { "F1Br1C", "F1Br2C", "F1Br3C", "F1Br4C" };
+
+                for (int i = 0; i < branchCoverage.Length; i++)
+                {
+                    Console.WriteLine($"{branches[i]} was {(branchCoverage[i] ? "hit" : "not hit")}");
+                }
+            }
             protected override void Dispose(bool isDisposing)
             {
                 base.Dispose(isDisposing);

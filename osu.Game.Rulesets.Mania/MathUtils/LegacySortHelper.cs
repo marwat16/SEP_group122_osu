@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Mania.MathUtils
     /// Source: https://referencesource.microsoft.com/#mscorlib/system/collections/generic/arraysorthelper.cs
     /// Copyright (c) Microsoft Corporation.  All rights reserved.
     /// </remarks>
-    internal static class LegacySortHelper<T>
+    public static class LegacySortHelper<T>
     {
         private const int quick_sort_depth_threshold = 32;
 
@@ -109,14 +109,17 @@ namespace osu.Game.Rulesets.Mania.MathUtils
                 downHeap(keys, 1, i - 1, lo, comparer);
             }
         }
+        private static readonly bool[] branchCoverage = new bool[4]; // Four branches: F2Br1C, F2Br2C, F2Br3C and F2Br4C
 
-        private static void downHeap(T[] keys, int i, int n, int lo, IComparer<T> comparer)
+        private static void MarkBranchCovered(int index)
         {
-            Contract.Requires(keys != null);
-            Contract.Requires(comparer != null);
-            Contract.Requires(lo >= 0);
-            Contract.Requires(lo < keys.Length);
-
+            if (index >= 0 && index < branchCoverage.Length)
+            {
+                branchCoverage[index] = true;
+            }
+        }
+        public static void downHeap(T[] keys, int i, int n, int lo, IComparer<T> comparer)
+        {
             T d = keys[lo + i - 1];
 
             while (i <= n / 2)
@@ -125,17 +128,42 @@ namespace osu.Game.Rulesets.Mania.MathUtils
 
                 if (child < n && comparer.Compare(keys[lo + child - 1], keys[lo + child]) < 0)
                 {
+                    MarkBranchCovered(0);
                     child++;
+                }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(1);
                 }
 
                 if (!(comparer.Compare(d, keys[lo + child - 1]) < 0))
+                {
+                    MarkBranchCovered(2);
                     break;
+                }
+                else
+                {
+                    //do nothing
+                    MarkBranchCovered(3);
+                }
 
                 keys[lo + i - 1] = keys[lo + child - 1];
                 i = child;
             }
 
+            PrintCoverage();
             keys[lo + i - 1] = d;
+        }
+
+        private static void PrintCoverage()
+        {
+            string[] branches = { "F2Br1C", "F2Br2C", "F2Br3C", "F2Br4C" };
+
+            for (int i = 0; i < branchCoverage.Length; i++)
+            {
+                Console.WriteLine($"{branches[i]} was {(branchCoverage[i] ? "hit" : "not hit")}");
+            }
         }
 
         private static void swap(T[] a, int i, int j)
