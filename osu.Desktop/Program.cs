@@ -12,9 +12,13 @@ using osu.Framework.Development;
 using osu.Framework.Logging;
 using osu.Framework.Platform;
 using osu.Game;
+using osu.Game.Graphics.Backgrounds;
 using osu.Game.Rulesets.Mania.MathUtils;
 using osu.Game.IPC;
+using osu.Game.Replays.Legacy;
+using osu.Game.Rulesets.Catch.Replays;
 using osu.Game.Tournament;
+using osuTK;
 using SDL;
 using Squirrel;
 
@@ -171,12 +175,20 @@ namespace osu.Desktop
                 }
             }
 
+            //for the print statements - Function 1, Daphne
+            Background background1 = new Background("texture1");
+            Background background2 = new Background("texture1");
+            background1.Equals(background2);
+
+            //for the print statements - Function 2, Daphne
+            var legacyFrame = new LegacyReplayFrame(0, new Vector2(10, 0).X, null, ReplayButtonState.Left1);
+            var catchFrame = new CatchReplayFrame();
+            catchFrame.FromLegacy(legacyFrame, null, null);
 
             //for the print statements - Function 2, Cosmina
             int[] array = { 5, 3, 8, 4, 2, 7 };
             IComparer<int> comparer = Comparer<int>.Default;
             LegacySortHelper<int>.downHeap(array, 1, array.Length, 0, comparer);
-
         }
 
 
