@@ -153,6 +153,7 @@ namespace osu.Desktop
                         Logger.Log("Starting legacy IPC provider...");
                         legacyIpc = new LegacyTcpIpcProvider();
                         legacyIpc.Bind();
+
                     }
                     catch (Exception ex)
                     {
@@ -170,10 +171,12 @@ namespace osu.Desktop
                 }
             }
 
+
             //for the print statements - Function 2, Cosmina
             int[] array = { 5, 3, 8, 4, 2, 7 };
             IComparer<int> comparer = Comparer<int>.Default;
             LegacySortHelper<int>.downHeap(array, 1, array.Length, 0, comparer);
+
         }
 
 
@@ -233,4 +236,6 @@ namespace osu.Desktop
             });
         }
     }
+
+
 }
